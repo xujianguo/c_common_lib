@@ -8,12 +8,16 @@
 
 /*************************************************************************
 	介绍：
-	    下面实现来一个双向链表，包含关于链表的一些基本的操作
+	    下面实现了一个双向链表，包含关于链表的一些基本的操作
 	    
 	扩展：
 	    用双向链表实现一个栈
 	        入栈操作：调用list_add_node_tail方法从尾部插入
-	        出栈操作：
+	        出栈操作：调用list_del_node_tail方法从尾部移出
+	         
+	    用双向链表实现一个队列
+			入队操作：调用list_add_node_tail方法从尾部插入
+			出队操作：调用list_del_node_head方法从头部删除
  ************************************************************************/
  
 #ifndef _xjg_list_h
@@ -22,7 +26,7 @@
 #include "xjg_common.h"
 
 //链表节点
-typedef struct list_node {
+typedef struct xjg_list_node {
 	//前驱
 	struct list_node *prev;
 	//后继
@@ -34,9 +38,9 @@ typedef struct list_node {
 //链表
 typedef struct xjg_list {
 	//头
-	list_node *head;
+	xjg_list_node *head;
 	//尾
-	list_node *tail;
+	xjg_list_node *tail;
 	//释放时对value指针的操作
 	void (*free)(void *ptr);
 	//匹配比较
@@ -88,6 +92,15 @@ xjg_list *list_create(void);
 void list_free(xjg_list *list);
 
 /**
+ * 插入节点的基础实现
+ * @param list 链表
+ * @param target 目标
+ * @param prev 前驱
+ * @param next 后继
+ */
+void list_add_base(xjg_list *list, xjg_list_node *target, xjg_list_node *prev, xjg_list_node *next);
+
+/**
  * 在指定位置插入节点
  * @param list 链表
  * @param position 位置
@@ -113,6 +126,15 @@ xjg_list *list_add_node_head(xjg_list *list, void *value);
 xjg_list *list_add_node_tail(xjg_list *list, void *value);
 
 /**
+ * 删除节点的基础实现
+ * @param list 链表
+ * @param target 目标
+ * @param prev 前驱
+ * @param next 后继
+ */
+void list_del_base(xjg_list *list, xjg_list_node *target, xjg_list_node *prev, xjg_list_node *next);
+
+/**
  * 移除指定位置的节点
  * @param list 链表
  * @param position 位置
@@ -135,13 +157,6 @@ void *list_del_node_tail(xjg_list *list);
  * @return 返回删除的节点值
  */
 void *list_del_node_head(xjg_list *list);
-
-/**
- * 删除指定节点
- * @param list 链表
- * @param node 节点
- */
-void list_del_node(xjg_list *list, xjg_list_node *node);
 
 /**
  * 获取链表的迭代器
@@ -179,14 +194,5 @@ xjg_list_node *list_search_key(xjg_list *list, void *key);
  * @return 节点
  */
 xjg_list_node *list_index(xjg_list *list, ulong_t index);
-
-/**
- * 设置指定位置的节点值
- * @param list 链表
- * @param position 位置
- * @param value 新的值
- * @return 返回被替换的节点值
- */
-void *list_set(xjg_list *list, uint_t position, void *value);
 
 #endif

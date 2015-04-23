@@ -39,97 +39,86 @@ void list_free(xjg_list *list) {
 	free(list);
 }
 
-void list_add_base(xjg_list_node *target, xjg_list_node *prev, xjg_list_node *next) {
-    
-    
-    if(prev && next) {
-        
-    } else {
-    
-    }
-    
-    if(next) {
-    
-    } else {
-    
-    }
+void list_add_base(xjg_list *list, xjg_list_node *target, xjg_list_node *prev, xjg_list_node *next) {
+    if(list->len == 0) {
+		list->head = list->tail = target;
+		target->prev = NULL;
+		target->next = NULL;
+	} else {
+		if(prev) {
+			prev->next = target;
+			target->prev = prev;
+		} else {
+			list->head = target;
+			target->prev = NULL;
+		}
+		
+		if(next) {
+			next->prev = target;
+			target->next = next;
+		} else {
+			list->tail = target;
+			target->next = NULL;
+		}
+	}
+	list->len++;
 }
 
 xjg_list *list_add_node(xjg_list *list, uint_t position, void *value) {
-    
+	xjg_list_node *target = (xjg_list_node *)malloc(sizeof(xjg_list_node));
+	if(NULL == target)
+        xjg_show_allocate_error("list_add_node", sizeof(xjg_list_node));
+    xjg_list_node * next = list_index(list, position);
+    list_add_base(list, target, next->prev, next);
+    return list;
 }
 
 xjg_list *list_add_node_head(xjg_list *list, void *value) {
-    xjg_list_node *node = (xjg_list_node *)malloc(sizeof(xjg_list_node));
-    if(NULL == node)
-        xjg_show_allocate_error("list_add_node_head", sizeof(xjg_list_node));
-    
-    node->value = value;
-    if(list->len == 0) {
-        list->head = list->tail = node;
-        node->prev = NULL;
-        node->next = NULL;
-    } else {
-        node->next = list->head;
-        node->prev = NULL;
-        list->head->prev = node;
-        list->head = node;
-    }
-    list->len++;
-    
-    return list;
+    return list_add_node(list, 1, value);
 }
 
-xjg_list *list_add_node_tail(xjg_list *list, void *value) {
-    xjg_list_node *node = (xjg_list_node *)malloc(sizeof(xjg_list_node));
-    if(NULL == node)
-        xjg_show_allocate_error("list_add_node_head", sizeof(xjg_list_node));
-    
-    node->value = value;
-    if(list->len == 0) {
-        list->head = list->tail = node;
-        node->prev = NULL;
-        node->next = NULL;
-    } else {
-        node->next = NULL;
-        node->prev = head->tail;
-        list->tail->next = node;
-        list->tail = node;
-    }
-    list->len--;
-    
-    return list;
+xjg_list *list_add_node_tail(xjg_list *list, void *value) { 
+    return list_add_node(list, xjg_list->len, value);
+}
+
+void list_del_base(xjg_list *list, xjg_list_node *target, xjg_list_node *prev, xjg_list_node *next) {
+	if(list->len > 0) {
+		if(prev == NULL) {
+			list->head = next;
+			next->prev = NULL;
+		} else {
+			prev->next = next;
+		}
+		
+		if(next == NULL) {
+			list->tail = prev;
+			prev->next = NULL;
+		} else {
+			next->prev = prev;
+		}
+		
+		if(list->free)
+			list->free(target->value);
+		free(target);
+		
+		list->len--;
+	}
 }
 
 void *list_del_node(xjg_list *list, uint_t position) {
-
+	xjg_list_node *target = list_index(list, position);
+	list_del_base(list, target, target->prev, target->next);
+	if(list->free)
+		return NULL;
+	return target->value;
 }
 
 void *list_del_node_tail(xjg_list *list) {
-
+	return list_del_node(list, list->len);
 }
 
 void *list_del_node_head(xjg_list *list) {
-
-}
-
-void list_del_node(xjg_list *list, xjg_list_node *node) {
-    if(node->prev) {
-        node->prev->next = node->next;
-    } else {
-        list->head = node->next;
-    }
-    
-    if(node->next) {
-        node->next->prev = node->prev;
-    } else {
-        list->tail = node->prev;
-    }
-    
-    if(list->free)
-        list->free(node->value);
-    free(node);
-    list->len--;
+	return list_del_node(list, 1);
 }
 
 xjg_list_iterator *list_get_iterator(xjg_list *list, int direction) {
@@ -200,9 +189,5 @@ xjg_list_node *list_index(xjg_list *list, ulong_t index) {
             node = node->next;
     }
     return node;
-}
-
-void *list_set(xjg_list *list, uint_t position, void *value) {
-
 }
 
