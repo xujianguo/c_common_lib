@@ -50,3 +50,41 @@ void xjg_sort_bubble(void *array, uint_t size, xjg_compare compare, uint_t start
 	}
 }
 
+void xjg_sort_select(void *array, uint_t size, xjg_compare compare, uint_t start, uint_t end) {
+	int i, j, min;
+	uchar_t *temp = (uchar_t*)malloc(size);
+
+	for(i = start; i < end; i++) {
+		min = i;
+		for(j = i+1; j <= end; j++) {
+			if(compare(array+j*size, array+size*min) < 0) {
+				min = j;
+			}
+		}
+		if(min != i) {
+			memcpy(temp, array+i*size, size);
+			memcpy(array+i*size, array+min*size, size);
+			memcpy(array+min*size, temp, size);
+		}
+	}
+}
+
+void xjg_sort_shell(void *array, uint_t size, xjg_compare compare, uint_t start, uint_t end) {
+	int i, j, increment;
+	uchar_t *temp = (uchar_t*)malloc(size);
+
+	for(increment = (end-start)/2; increment > 0; increment /= 2) {
+		for(i = increment; i <= end; i++) {
+			memcpy(temp, array+i*size, size);
+			for(j = i; j >= increment; j -= increment) {
+				if(compare(array+(j-increment)*size, temp) > 0) {
+					memcpy(array+j*size, array+(j-increment)*size, size);
+				} else {
+					break;
+				}
+			}
+			memcpy(array+j*size, temp, size);
+		}
+	}
+}
+
