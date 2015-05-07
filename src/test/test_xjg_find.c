@@ -10,6 +10,8 @@
 uint_t a[] = {5, 4, 3, 9, 20, 2, 7, 17, 12, 10, 8, 15, 36, 24, 18, 16, 10, 6, 11, 13};
 uint_t len = 20;
 
+uint_t a_sort[] = {2, 5, 6, 8, 9, 12};
+
 int int_compare(void *a, void *b) {
 		int *_a = (int *)a;
 		int *_b = (int *)b;
@@ -20,7 +22,7 @@ int int_compare(void *a, void *b) {
 		return 0;
 }
 
-int target = 3;
+int target = 5;
 //void *key = &target;
 
 void show_result(int result) {
@@ -32,7 +34,13 @@ void xjg_test_find_sequence() {
 	show_result(result);
 }
 
+void xjg_test_find_binary() {
+	int result = xjg_find_binary(a_sort, sizeof(int), int_compare, 0, 5, target);
+	show_result(result);
+}
+
 int main() {
-	xjg_test_find_sequence();
+	//xjg_test_find_sequence();
+	xjg_test_find_binary();
 	return 0;
 }
