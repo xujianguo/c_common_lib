@@ -46,9 +46,27 @@ void xjg_test_sort_shell() {
 	print_array(a, len);
 }
 
+void xjg_test_sort_heap() {
+	xjg_sort_heap(a, sizeof(int), int_compare, 0, 19);
+	print_array(a, len);
+}
+
+void xjg_test_sort_merge() {
+	xjg_sort_merge(a, sizeof(int), int_compare, 0, 19);
+	print_array(a, len);
+}
+
+void xjg_test_sort_quick() {
+	xjg_sort_quick(a, sizeof(int), int_compare, 0, 19);
+	print_array(a, len);
+}
+
 int main() {
 	//xjg_test_sort_insert();
 	//xjg_test_sort_bubble();
 	//xjg_test_sort_select();
-	xjg_test_sort_shell();
+	//xjg_test_sort_shell();
+	//xjg_test_sort_heap();
+	//xjg_test_sort_merge();
+	xjg_test_sort_quick();
 }
